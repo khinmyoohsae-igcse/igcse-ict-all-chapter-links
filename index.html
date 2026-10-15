@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cambridge IGCSE ICT Hub - Quizzes & Flashcards</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        darkBg: '#0f172a',
+                        cardBg: '#1e293b',
+                        cardHover: '#334155',
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- FontAwesome CDN -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-darkBg text-slate-100 min-h-screen flex flex-col font-sans selection:bg-indigo-500 selection:text-white">
+
+    <!-- Header -->
+    <header class="border-b border-slate-800 bg-slate-900/80 backdrop-blur sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div class="flex items-center space-x-3">
+                <div class="bg-indigo-600 p-2.5 rounded-xl shadow-lg shadow-indigo-600/30">
+                    <i class="fa-solid fa-graduation-cap text-white text-xl"></i>
+                </div>
+                <div>
+                    <h1 class="text-xl font-bold tracking-tight text-white">IGCSE ICT Learning Hub</h1>
+                    <p class="text-xs text-slate-400">Interactive Quizzes, Flashcards & Practice Tools</p>
+                </div>
+            </div>
+
+            <!-- Global Search Bar -->
+            <div class="w-full sm:w-80 relative">
+                <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
+                    <i class="fa-solid fa-search"></i>
+                </span>
+                <input type="text" id="searchInput" placeholder="Search chapters, topics, tools..." 
+                    class="w-full pl-10 pr-4 py-2 bg-slate-800 border border-slate-700 rounded-xl text-sm text-slate-200 placeholder-slate-500 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition">
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-grow w-full">
+
+        <!-- Welcome Banner & GitHub Settings -->
+        <div class="bg-gradient-to-r from-indigo-900/40 via-purple-900/40 to-slate-900 border border-indigo-500/20 rounded-2xl p-6 sm:p-8 mb-10 shadow-xl relative overflow-hidden">
+            <div class="absolute -right-10 -bottom-10 w-60 h-60 bg-indigo-500/10 rounded-full blur-3xl pointer-events-none"></div>
+            <div class="relative z-10 max-w-3xl">
+                <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium bg-indigo-500/20 text-indigo-300 mb-4 border border-indigo-500/30">
+                    <i class="fa-solid fa-bolt text-indigo-400"></i> Complete Revision Suite
+                </span>
+                <h2 class="text-2xl sm:text-3xl font-extrabold text-white tracking-tight mb-3">Master Cambridge IGCSE ICT (0417 / 0983)</h2>
+                <p class="text-slate-300 text-sm sm:text-base leading-relaxed mb-6">
+                    Access all chapter-wise interactive flashcards, multiple-choice questions (MCQs) with instant feedback, explanations, and randomized answer shuffling. Click any module below to start practicing right away!
+                </p>
+
+                <!-- URL Prefix Configuration for GitHub Pages -->
+                <div class="bg-slate-900/90 border border-slate-700/80 rounded-xl p-4 flex flex-col sm:flex-row items-center gap-3">
+                    <div class="flex items-center gap-2 text-sm text-slate-300 whitespace-nowrap">
+                        <i class="fa-solid fa-link text-indigo-400"></i> Base Link Prefix:
+                    </div>
+                    <input type="text" id="baseUrlInput" placeholder="./" value="./" 
+                        class="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-slate-200 font-mono focus:outline-none focus:border-indigo-500"
+                        title="Change this to your GitHub Pages URL if hosting remotely (e.g. https://username.github.io/repo/)">
+                    <button onclick="updateBaseUrl()" class="w-full sm:w-auto px-4 py-1.5 bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold rounded-lg transition shadow-sm whitespace-nowrap">
+                        Apply Prefix
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Category Filter Pills -->
+        <div class="flex items-center gap-2 overflow-x-auto pb-4 mb-8 scrollbar-none">
+            <button onclick="filterCategory('all')" data-category="all" class="category-btn px-4 py-2 rounded-xl text-xs font-semibold bg-indigo-600 text-white transition shadow-sm whitespace-nowrap">
+                <i class="fa-solid fa-th-large mr-1.5"></i> All Modules
+            </button>
+            <button onclick="filterCategory('flashcards')" data-category="flashcards" class="category-btn px-4 py-2 rounded-xl text-xs font-semibold bg-slate-800 hover:bg-slate-700 text-slate-300 transition whitespace-nowrap">
+                <i class="fa-solid fa-clone mr-1.5"></i> Flashcards
+            </button>
+            <button onclick="filterCategory('ch1')" data-category="ch1" class="category-btn px-4 py-2 rounded-xl text-xs font-semibold bg-slate-800 hover:bg-slate-700 text-slate-300 transition whitespace-nowrap">
+                Ch 1: Types & Components
+            </button>
+            <button onclick="filterCategory('ch2')" data-category="ch2" class="category-btn px-4 py-2 rounded-xl text-xs font-semibold bg-slate-800 hover:bg-slate-700 text-slate-300 transition whitespace-nowrap">
+                Ch 2: Input & Output
+            </button>
+            <button onclick="filterCategory('ch3')" data-category="ch3" class="category-btn px-4 py-2 rounded-xl text-xs font-semibold bg-slate-800 hover:bg-slate-700 text-slate-300 transition whitespace-nowrap">
+                Ch 3: Storage
+            </button>
+            <button onclick="filterCategory('ch4')" data-category="ch4" class="category-btn px-4 py-2 rounded-xl text-xs font-semibold bg-slate-800 hover:bg-slate-700 text-slate-300 transition whitespace-nowrap">
+                Ch 4: Networks & Security
+            </button>
+            <button onclick="filterCategory('ch5')" data-category="ch5" class="category-btn px-4 py-2 rounded-xl text-xs font-semibold bg-slate-800 hover:bg-slate-700 text-slate-300 transition whitespace-nowrap">
+                Ch 5: Effects of IT
+            </button>
+            <button onclick="filterCategory('ch6')" data-category="ch6" class="category-btn px-4 py-2 rounded-xl text-xs font-semibold bg-slate-800 hover:bg-slate-700 text-slate-300 transition whitespace-nowrap">
+                Ch 6: ICT Applications
+            </button>
+        </div>
+
+        <!-- Grid Container for Cards -->
+        <div id="linksGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <!-- Cards will be injected by JavaScript -->
+        </div>
+
+        <!-- No Results State -->
+        <div id="noResults" class="hidden text-center py-16">
+            <div class="bg-slate-800/50 w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-4 text-slate-500 text-2xl">
+                <i class="fa-solid fa-folder-open"></i>
+            </div>
+            <h3 class="text-lg font-semibold text-slate-300 mb-1">No matching modules found</h3>
+            <p class="text-slate-500 text-sm">Try adjusting your search query or filter category.</p>
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="border-t border-slate-800 bg-slate-900/50 py-6 mt-12 text-center text-xs text-slate-500">
+        <p>Cambridge IGCSE ICT Revision Hub &bull; Built with interactive single-file web apps.</p>
+    </footer>
+
+    <!-- JavaScript Data & Logic -->
+    <script>
+        // Define all available apps and links
+        const apps = [
+            // Flashcards
+            {
+                title: "Chapter 1 Flashcards (50 Cards)",
+                category: "flashcards ch1",
+                type: "Flashcards",
+                filename: "chapter1_flashcards.html",
+                desc: "Hardware, Software, Operating Systems, Types of Computers & Emerging Technologies.",
+                icon: "fa-clone",
+                badgeColor: "bg-blue-500/20 text-blue-400 border-blue-500/30"
+            },
+            {
+                title: "Chapter 3 Flashcards (50 Cards)",
+                category: "flashcards ch3",
+                type: "Flashcards",
+                filename: "chapter3_flashcards.html",
+                desc: "Magnetic media, Optical media, Solid-state media, and The Future of Storage Devices.",
+                icon: "fa-clone",
+                badgeColor: "bg-blue-500/20 text-blue-400 border-blue-500/30"
+            },
+            {
+                title: "Chapter 4 Flashcards (50 Cards)",
+                category: "flashcards ch4",
+                type: "Flashcards",
+                filename: "chapter4_flashcards.html",
+                desc: "Networks, Network communication issues, security, and protocols.",
+                icon: "fa-clone",
+                badgeColor: "bg-blue-500/20 text-blue-400 border-blue-500/30"
+            },
+            {
+                title: "Chapter 5 Flashcards (50 Cards)",
+                category: "flashcards ch5",
+                type: "Flashcards",
+                filename: "chapter5_flashcards.html",
+                desc: "Microprocessor-controlled devices and potential health problems related to prolonged ICT use.",
+                icon: "fa-clone",
+                badgeColor: "bg-blue-500/20 text-blue-400 border-blue-500/30"
+            },
+            {
+                title: "Chapter 6 Flashcards (50 Cards)",
+                category: "flashcards ch6",
+                type: "Flashcards",
+                filename: "chapter6_flashcards.html",
+                desc: "Communication, Modelling, Expert systems, Banking, Medicine, Retail, Recognition, and Satellites.",
+                icon: "fa-clone",
+                badgeColor: "bg-blue-500/20 text-blue-400 border-blue-500/30"
+            },
+
+            // Chapter 1 MCQs
+            {
+                title: "1.1.1 Hardware MCQ Quiz (30 Qs)",
+                category: "ch1 mcq",
+                type: "Quiz",
+                filename: "hardware_1_1_1_quiz.html",
+                desc: "Input, output, internal components, and peripherals MCQ practice with shuffle & rationales.",
+                icon: "fa-laptop-code",
+                badgeColor: "bg-purple-500/20 text-purple-400 border-purple-500/30"
+            },
+            {
+                title: "1.1.2 Software MCQ Quiz (30 Qs)",
+                category: "ch1 mcq",
+                type: "Quiz",
+                filename: "software_1_1_2_quiz.html",
+                desc: "Applications software vs system software, utilities, and compilers.",
+                icon: "fa-file-code",
+                badgeColor: "bg-purple-500/20 text-purple-400 border-purple-500/30"
+            },
+            {
+                title: "1.1.3 Analogue & Digital Data MCQ Quiz (30 Qs)",
+                category: "ch1 mcq",
+                type: "Quiz",
+                filename: "analogue_digital_quiz.html",
+                desc: "ADC, DAC, sensors, converters, and continuous vs discrete signals.",
+                icon: "fa-wave-square",
+                badgeColor: "bg-purple-500/20 text-purple-400 border-purple-500/30"
+            },
+            {
+                title: "1.2 CPU & Internal Memory MCQ Quiz (30 Qs)",
+                category: "ch1 mcq",
+                type: "Quiz",
+                filename: "cpu_internal_memory_quiz.html",
+                desc: "CPU architecture, ALU, control unit, RAM, ROM, cache memory, and registers.",
+                icon: "fa-microchip",
+                badgeColor: "bg-purple-500/20 text-purple-400 border-purple-500/30"
+            },
+            {
+                title: "1.3.1 User Interfaces MCQ Quiz (30 Qs)",
+                category: "ch1 mcq",
+                type: "Quiz",
+                filename: "user_interfaces_quiz.html",
+                desc: "CLI, GUI, Dialogue-based, and Gesture-based user interfaces comparison.",
+                icon: "fa-desktop",
+                badgeColor: "bg-purple-500/20 text-purple-400 border-purple-500/30"
+            },
+            {
+                title: "1.4 Types of Computers MCQ Quiz (40 Qs)",
+                category: "ch1 mcq",
+                type: "Quiz",
+                filename: "types_of_computers_quiz.html",
+                desc: "Desktop computers, Laptops, Tablets, Smartphones, and smartwatches.",
+                icon: "fa-tablet-screen-button",
+                badgeColor: "bg-purple-500/20 text-purple-400 border-purple-500/30"
+            },
+            {
+                title: "1.5 Emerging Technologies MCQ Quiz (20 Qs)",
+                category: "ch1 mcq",
+                type: "Quiz",
+                filename: "emerging_technologies_quiz.html",
+                desc: "Artificial Intelligence, Biometrics, Robotics, Quantum Cryptography, and VR.",
+                icon: "fa-robot",
+                badgeColor: "bg-purple-500/20 text-purple-400 border-purple-500/30"
+            },
+
+            // Chapter 2 MCQs
+            {
+                title: "2.2.2 & 2.2.3 RFID & OMR MCQ Quiz (30 Qs)",
+                category: "ch2 mcq",
+                type: "Quiz",
+                filename: "rfid_omr_quiz.html",
+                desc: "Radio Frequency Identification tags and Optical Mark Recognition document processing.",
+                icon: "fa-barcode",
+                badgeColor: "bg-emerald-500/20 text-emerald-400 border-emerald-500/30"
+            },
+            {
+                title: "2.2.5 & 2.2.6 Barcode & QR Code MCQ Quiz (30 Qs)",
+                category: "ch2 mcq",
+                type: "Quiz",
+                filename: "barcode_qr_quiz.html",
+                desc: "Linear barcodes, laser scanners, QR code matrices, and smartphone scanning.",
+                icon: "fa-qrcode",
+                badgeColor: "bg-emerald-500/20 text-emerald-400 border-emerald-500/30"
+            },
+            {
+                title: "2.3.7 & 2.3.8 Speakers & Actuators MCQ Quiz (30 Qs)",
+                category: "ch2 mcq",
+                type: "Quiz",
+                filename: "speakers_actuators_quiz.html",
+                desc: "Digital-to-analogue conversion, sound output, heaters, motors, and valves.",
+                icon: "fa-volume-high",
+                badgeColor: "bg-emerald-500/20 text-emerald-400 border-emerald-500/30"
+            },
+
+            // Chapter 3 MCQs
+            {
+                title: "3.1 Magnetic Storage Devices MCQ Quiz (30 Qs)",
+                category: "ch3 mcq",
+                type: "Quiz",
+                filename: "magnetic_storage_quiz.html",
+                desc: "Hard Disk Drives (HDD), Portable HDDs, and Magnetic Tape Drives.",
+                icon: "fa-hard-drive",
+                badgeColor: "bg-amber-500/20 text-amber-400 border-amber-500/30"
+            },
+
+            // Chapter 4 MCQs
+            {
+                title: "4.1 Networks & Devices MCQ Quiz (20 Qs)",
+                category: "ch4 mcq",
+                type: "Quiz",
+                filename: "networks_quiz.html",
+                desc: "Switches, hubs, network interface cards (NIC), bridges, and network terminologies.",
+                icon: "fa-network-wired",
+                badgeColor: "bg-cyan-500/20 text-cyan-400 border-cyan-500/30"
+            },
+            {
+                title: "4.1.2 & 4.1.3 Routers, Wi-Fi & Bluetooth Quiz (20 Qs)",
+                category: "ch4 mcq",
+                type: "Quiz",
+                filename: "routers_wifi_bluetooth_quiz.html",
+                desc: "Routing packets, wireless networking, encryption keys, and radio frequency bands.",
+                icon: "fa-wifi",
+                badgeColor: "bg-cyan-500/20 text-cyan-400 border-cyan-500/30"
+            },
+            {
+                title: "4.1.4 - 4.1.6 Cloud & Network Types Quiz (30 Qs)",
+                category: "ch4 mcq",
+                type: "Quiz",
+                filename: "cloud_networks_quiz.html",
+                desc: "Cloud storage benefits/drawbacks, LAN, WAN, WLAN, and client-server architectures.",
+                icon: "fa-cloud",
+                badgeColor: "bg-cyan-500/20 text-cyan-400 border-cyan-500/30"
+            },
+            {
+                title: "4.2 Security & Authentication Quiz (30 Qs)",
+                category: "ch4 mcq",
+                type: "Quiz",
+                filename: "network_security_auth_quiz.html",
+                desc: "Data transfer security, firewalls, encryption, strong passwords, and biometrics.",
+                icon: "fa-shield-halved",
+                badgeColor: "bg-cyan-500/20 text-cyan-400 border-cyan-500/30"
+            },
+
+            // Chapter 5 MCQs
+            {
+                title: "5.2 Health Problems & IT Equipment Quiz (10 Qs)",
+                category: "ch5 mcq",
+                type: "Quiz",
+                filename: "health_problems_it_quiz.html",
+                desc: "RSI, eyestrain, back pain, ozone irritation, and ergonomic workspace preventive measures.",
+                icon: "fa-user-nurse",
+                badgeColor: "bg-rose-500/20 text-rose-400 border-rose-500/30"
+            },
+
+            // Chapter 6 MCQs
+            {
+                title: "6.1.1 Communication Media Quiz (20 Qs)",
+                category: "ch6 mcq",
+                type: "Quiz",
+                filename: "communication_media_quiz.html",
+                desc: "Internet, VoIP, video conferencing, email, and transmission mediums.",
+                icon: "fa-comments",
+                badgeColor: "bg-indigo-500/20 text-indigo-400 border-indigo-500/30"
+            },
+            {
+                title: "6.1.2 Mobile Communication Quiz (20 Qs)",
+                category: "ch6 mcq",
+                type: "Quiz",
+                filename: "mobile_communication_quiz.html",
+                desc: "Cellular networks, SMS, 4G/5G technology, apps, and mobile internet access.",
+                icon: "fa-mobile-screen",
+                badgeColor: "bg-indigo-500/20 text-indigo-400 border-indigo-500/30"
+            },
+            {
+                title: "6.2 Computer Modelling Quiz (20 Qs)",
+                category: "ch6 mcq",
+                type: "Quiz",
+                filename: "modelling_applications_quiz.html",
+                desc: "Simulations, bridge testing, flight simulators, financial forecasting, and safety.",
+                icon: "fa-cube",
+                badgeColor: "bg-indigo-500/20 text-indigo-400 border-indigo-500/30"
+            },
+            {
+                title: "6.3 Computer-Controlled Systems Quiz (20 Qs)",
+                category: "ch6 mcq",
+                type: "Quiz",
+                filename: "computer_controlled_systems_quiz.html",
+                desc: "Feedback loops, sensors, microprocessors, actuators in greenhouses, streetlights, and traffic.",
+                icon: "fa-sliders",
+                badgeColor: "bg-indigo-500/20 text-indigo-400 border-indigo-500/30"
+            },
+            {
+                title: "6.4 School Management Systems Quiz (20 Qs)",
+                category: "ch6 mcq",
+                type: "Quiz",
+                filename: "school_management_systems_quiz.html",
+                desc: "Student databases, attendance tracking, report generation, and VLE platforms.",
+                icon: "fa-school",
+                badgeColor: "bg-indigo-500/20 text-indigo-400 border-indigo-500/30"
+            },
+            {
+                title: "6.5 Online Booking Systems Quiz (20 Qs)",
+                category: "ch6 mcq",
+                type: "Quiz",
+                filename: "booking_systems_quiz.html",
+                desc: "Airline ticket booking, hotel reservations, cinema seating, and double-booking prevention.",
+                icon: "fa-ticket",
+                badgeColor: "bg-indigo-500/20 text-indigo-400 border-indigo-500/30"
+            },
+            {
+                title: "6.7 Information Systems in Medicine Quiz (20 Qs)",
+                category: "ch6 mcq",
+                type: "Quiz",
+                filename: "medicine_information_systems_quiz.html",
+                desc: "Patient monitoring, electronic health records, 3D bioprinting, and expert medical diagnosis.",
+                icon: "fa-hospital",
+                badgeColor: "bg-indigo-500/20 text-indigo-400 border-indigo-500/30"
+            },
+            {
+                title: "6.9 Retail Industry & Internet Shopping Quiz (25 Qs)",
+                category: "ch6 mcq",
+                type: "Quiz",
+                filename: "retail_industry_shopping_quiz.html",
+                desc: "POS terminals, stock control databases, e-commerce, and secure online payments.",
+                icon: "fa-cart-shopping",
+                badgeColor: "bg-indigo-500/20 text-indigo-400 border-indigo-500/30"
+            }
+        ];
+
+        let currentBaseUrl = "./";
+
+        function updateBaseUrl() {
+            const input = document.getElementById('baseUrlInput').value.trim();
+            currentBaseUrl = input === "" ? "./" : input;
+            renderApps(apps);
+        }
+
+        function renderApps(dataToRender) {
+            const grid = document.getElementById('linksGrid');
+            const noResults = document.getElementById('noResults');
+            grid.innerHTML = '';
+
+            if (dataToRender.length === 0) {
+                noResults.classList.remove('hidden');
+                return;
+            } else {
+                noResults.classList.add('hidden');
+            }
+
+            dataToRender.forEach(app => {
+                const fullUrl = currentBaseUrl.endsWith('/') ? currentBaseUrl + app.filename : currentBaseUrl + '/' + app.filename;
+                
+                const card = document.createElement('div');
+                card.className = "bg-cardBg border border-slate-800 hover:border-indigo-500/50 rounded-2xl p-6 flex flex-col justify-between transition-all duration-300 hover:shadow-xl hover:shadow-indigo-500/5 group";
+                
+                card.innerHTML = `
+                    <div>
+                        <div class="flex items-start justify-between gap-4 mb-4">
+                            <div class="w-12 h-12 rounded-xl bg-slate-800 group-hover:bg-indigo-600 flex items-center justify-center text-slate-300 group-hover:text-white transition-all duration-300 shadow-inner">
+                                <i class="fa-solid ${app.icon} text-lg"></i>
+                            </div>
+                            <span class="px-2.5 py-1 rounded-full text-xs font-semibold border ${app.badgeColor}">
+                                ${app.type}
+                            </span>
+                        </div>
+                        <h3 class="text-base font-bold text-white group-hover:text-indigo-400 transition-colors mb-2">
+                            ${app.title}
+                        </h3>
+                        <p class="text-slate-400 text-xs sm:text-sm leading-relaxed mb-6">
+                            ${app.desc}
+                        </p>
+                    </div>
+                    <div class="pt-4 border-t border-slate-800/80 flex items-center justify-between">
+                        <span class="text-[11px] font-mono text-slate-500 truncate max-w-[180px]">${app.filename}</span>
+                        <a href="${fullUrl}" target="_blank" rel="noopener noreferrer" 
+                           class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold transition shadow-md shadow-indigo-600/20">
+                            Launch App <i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i>
+                        </a>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        // Search & Filter Logic
+        const searchInput = document.getElementById('searchInput');
+        let activeCategory = 'all';
+
+        function filterCategory(category) {
+            activeCategory = category;
+            
+            // Update button styles
+            document.querySelectorAll('.category-btn').forEach(btn => {
+                if (btn.getAttribute('data-category') === category) {
+                    btn.className = "category-btn px-4 py-2 rounded-xl text-xs font-semibold bg-indigo-600 text-white transition shadow-sm whitespace-nowrap";
+                } else {
+                    btn.className = "category-btn px-4 py-2 rounded-xl text-xs font-semibold bg-slate-800 hover:bg-slate-700 text-slate-300 transition whitespace-nowrap";
+                }
+            });
+
+            applyFilters();
+        }
+
+        function applyFilters() {
+            const query = searchInput.value.toLowerCase().trim();
+            
+            const filtered = apps.filter(app => {
+                const matchesCategory = activeCategory === 'all' || app.category.includes(activeCategory);
+                const matchesSearch = app.title.toLowerCase().includes(query) || 
+                                      app.desc.toLowerCase().includes(query) || 
+                                      app.filename.toLowerCase().includes(query);
+                return matchesCategory && matchesSearch;
+            });
+
+            renderApps(filtered);
+        }
+
+        searchInput.addEventListener('input', applyFilters);
+
+        // Initial render
+        renderApps(apps);
+    </script>
+</body>
+</html>
